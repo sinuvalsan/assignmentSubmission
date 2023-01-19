@@ -10,6 +10,7 @@ public class PasswordEncoderTest {
 	public void encodePassword() {
 		
 		PasswordEncoder encoder =  new BCryptPasswordEncoder();
-		System.out.println(encoder.encode("student"));
+		System.out.println("student: " + encoder.encode("student"));
+		System.out.println("reviewer: " + encoder.encode("reviewer"));
 	}
 }
