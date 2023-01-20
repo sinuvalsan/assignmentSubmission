@@ -23,7 +23,7 @@ function httpRequest(url, requestMethod, jwt, requestBody) {
         return response.text();
       }
     } else if (response.status === 401) {
-      window.location.href = "/login";
+      // window.location.href = "/login";
       localStorage.setItem("jwt", null);
     }
   });

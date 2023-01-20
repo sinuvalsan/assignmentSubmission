@@ -20,13 +20,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SecurityConfig {
-	
+
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
-	
+
 	@Autowired
 	private JwtFilter jwtFilter;
-	
+
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
 		return authConfig.getAuthenticationManager();
@@ -49,15 +49,14 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		
-		http.cors().and().csrf().disable().exceptionHandling()
-			.authenticationEntryPoint((request, response, ex) ->{ 
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-				})
-			.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
-		
-		http.authorizeHttpRequests().requestMatchers("/api/auth/**").permitAll().anyRequest().authenticated();
-		
+
+		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint((request, response, ex) -> {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+		}).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
+
+		http.authorizeHttpRequests().requestMatchers("/api/auth/**").permitAll().requestMatchers("/api/users/**")
+				.permitAll().anyRequest().authenticated();
+
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

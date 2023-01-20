@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Button,
   ButtonGroup,
   Col,
@@ -29,6 +30,7 @@ const AssignmentView = () => {
 
   const [assignmentEnums, setAssignmentEnums] = useState([]);
   const [assignmentStatuses, setAssignmentStatuses] = useState([]);
+  const [showAlert, setShowAlert] = useState([]);
 
   //const prevAssignmentValue = useRef(assignment);
 
@@ -54,26 +56,18 @@ const AssignmentView = () => {
       assignment
     ).then((assignmentData) => {
       setAssignment(assignmentData);
+      setShowAlert(true);
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+      }, 1500);
+      return () => clearTimeout(timer);
     });
   }
 
   useEffect(() => {
     httpRequest(`/api/assignments/${assignmentId}`, "GET", user.jwt).then(
       (assignmentResponse) => {
-        let assignmentData = assignmentResponse.assignment;
-        if (assignmentData.branch === null) assignmentData.branch = "";
-        if (assignmentData.githubUrl === null) assignmentData.githubUrl = "";
-        setAssignment(assignmentData);
-        setAssignmentEnums(assignmentResponse.assignmentEnums);
-        setAssignmentStatuses(assignmentResponse.statusEnums);
-      }
-    );
-  }, []);
-
-  useEffect(() => {
-    httpRequest(`/api/assignments/${assignmentId}`, "GET", user.jwt).then(
-      (assignmentResponse) => {
-        let assignmentData = assignmentResponse.assignment;
+        let assignmentData = assignmentResponse.assignments[0];
         if (assignmentData.branch === null) assignmentData.branch = "";
         if (assignmentData.githubUrl === null) assignmentData.githubUrl = "";
         setAssignment(assignmentData);
@@ -96,7 +90,13 @@ const AssignmentView = () => {
       <Container className="mt-5">
         <Row className="d-flex align-items-center">
           <Col>
-            <h1>Assignment {assignmentId}</h1>
+            <h1>
+              {assignmentEnums.length > 0 ? (
+                assignmentEnums[assignment.number - 1].assignmentName
+              ) : (
+                <></>
+              )}
+            </h1>
           </Col>
           <Col>
             <StatusBadge text={assignment.status} />
@@ -239,6 +239,17 @@ const AssignmentView = () => {
             <></>
           )}
         </div>
+        {showAlert === true ? (
+          <Alert
+            style={{ width: "25%", float: "right" }}
+            key="successAlerts"
+            variant="success"
+          >
+            Submitted Successfully!
+          </Alert>
+        ) : (
+          <></>
+        )}
       </Container>
     </>
   );

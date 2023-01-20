@@ -9,10 +9,12 @@ const Dashboard = () => {
   const user = useUser();
   const navigate = useNavigate();
   const [assignments, setAssignments] = useState(null);
+  const [assignmentEnums, setAssignmentEnums] = useState([]);
 
   useEffect(() => {
-    httpRequest("api/assignments", "GET", user.jwt).then((assignmentData) => {
-      setAssignments(assignmentData);
+    httpRequest("api/assignments", "GET", user.jwt).then((response) => {
+      setAssignments(response.assignments);
+      setAssignmentEnums(response.assignmentEnums);
     });
   }, []);
 
@@ -37,28 +39,49 @@ const Dashboard = () => {
             </span>
           </Col>
         </Row>
-        <Button
-          style={{ marginBottom: "1em" }}
-          onClick={() => createAssignment()}
-        >
-          Add new assignment
-        </Button>
+        {assignments && assignments.length >= assignmentEnums.length ? (
+          <Button
+            style={{ marginBottom: "1em" }}
+            onClick={() => createAssignment()}
+            disabled
+          >
+            No more assignments
+          </Button>
+        ) : (
+          <Button
+            style={{ marginBottom: "1em" }}
+            onClick={() => createAssignment()}
+          >
+            Add new assignment
+          </Button>
+        )}
+
         {assignments ? (
           <div
             className="d-grid gap-5"
-            style={{ gridTemplateColumns: "repeat(auto-fit, 18rem)" }}
+            style={{ gridTemplateColumns: "repeat(auto-fit, 15rem)" }}
           >
             {assignments.map((assignment) => (
               <Card
                 key={assignment.id}
-                style={{ width: "18rem", height: "18rem" }}
+                style={{
+                  width: "15rem",
+                  height: "15rem",
+                  background: "#FAFAFA",
+                }}
               >
                 <Card.Body className="d-flex flex-column justify-content-around">
-                  <Card.Title>Assignment #{assignment.id}</Card.Title>
+                  <Card.Title>Assignment {assignment.number}</Card.Title>
+                  <Card.Subtitle>
+                    {assignmentEnums.length > 0 ? (
+                      assignmentEnums[assignment.number - 1].assignmentName
+                    ) : (
+                      <></>
+                    )}
+                  </Card.Subtitle>
                   <div className="d-flex align-items-start">
                     <StatusBadge text={assignment.status} />
                   </div>
-                  {/* <Card.Text>{assignment.name}</Card.Text> */}
                   <Button
                     onClick={() => {
                       navigate(`/assignments/${assignment.id}`);

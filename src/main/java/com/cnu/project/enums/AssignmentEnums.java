@@ -7,10 +7,12 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 public enum AssignmentEnums {
 
 	ASSIGNMENT_1(1,"HTML"),
-	ASSIGNMENT_2(2,"SPRING"),
-	ASSIGNMENT_3(3,"REACT"),
-	ASSIGNMENT_4(4,"JAVA"),
-	ASSIGNMENT_5(5,"CSS");
+	ASSIGNMENT_2(2,"CSS"),
+	ASSIGNMENT_3(3,"SQL"),
+	ASSIGNMENT_4(4,"REACT"),
+	ASSIGNMENT_5(5,"JAVA"),
+	ASSIGNMENT_6(6,"SPRING"),
+	ASSIGNMENT_7(7,"ANGULAR");
 	
 	private int assignmentNum;
 	private String assignmentName;

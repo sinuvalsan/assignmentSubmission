@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import CommentContainer from "../CommentContainer/commentContainer";
 import httpRequest from "../Services/httpServices";
@@ -21,6 +21,7 @@ const ReviewerAssignmentView = () => {
 
   const [assignmentEnums, setAssignmentEnums] = useState([]);
   const [assignmentStatuses, setAssignmentStatuses] = useState([]);
+  const [showAlert, setShowAlert] = useState([]);
 
   //const prevAssignmentValue = useRef(assignment);
 
@@ -46,13 +47,18 @@ const ReviewerAssignmentView = () => {
       assignment
     ).then((assignmentData) => {
       setAssignment(assignmentData);
+      setShowAlert(true);
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+      }, 1500);
+      return () => clearTimeout(timer);
     });
   }
 
   useEffect(() => {
     httpRequest(`/api/assignments/${assignmentId}`, "GET", user.jwt).then(
       (assignmentResponse) => {
-        let assignmentData = assignmentResponse.assignment;
+        let assignmentData = assignmentResponse.assignments[0];
         if (assignmentData.branch === null) assignmentData.branch = "";
         if (assignmentData.githubUrl === null) assignmentData.githubUrl = "";
         setAssignment(assignmentData);
@@ -75,7 +81,13 @@ const ReviewerAssignmentView = () => {
       <Container className="mt-5">
         <Row className="d-flex align-items-center">
           <Col>
-            <h1>Assignment {assignmentId}</h1>
+            <h1>
+              {assignmentEnums.length > 0 ? (
+                assignmentEnums[assignment.number - 1].assignmentName
+              ) : (
+                <></>
+              )}
+            </h1>
           </Col>
           <Col>
             <StatusBadge text={assignment.status} />
@@ -184,6 +196,17 @@ const ReviewerAssignmentView = () => {
             <></>
           )}
         </div>
+        {showAlert === true ? (
+          <Alert
+            style={{ width: "25%", float: "right" }}
+            key="successAlerts"
+            variant="success"
+          >
+            Updated!
+          </Alert>
+        ) : (
+          <></>
+        )}
       </Container>
     </>
   );

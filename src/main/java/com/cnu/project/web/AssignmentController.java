@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cnu.project.domain.Assignment;
 import com.cnu.project.domain.User;
 import com.cnu.project.dto.AssignmentResponseDto;
-import com.cnu.project.enums.AssignmentStatusEnums;
 import com.cnu.project.enums.AuthorityEnums;
 import com.cnu.project.service.AssignmentService;
 import com.cnu.project.util.AuthorityUtil;
@@ -40,7 +39,7 @@ public class AssignmentController {
 	public ResponseEntity<?> getAllAssignments(@AuthenticationPrincipal User user) {
 		
 		Set<Assignment> newAssignment = assignmentService.getAllAssignments(user);
-		return ResponseEntity.ok(newAssignment);
+		return ResponseEntity.ok(new AssignmentResponseDto(newAssignment));
 	}
 	
 	@GetMapping("{assignmentId}")

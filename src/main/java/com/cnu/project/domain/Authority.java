@@ -2,6 +2,8 @@ package com.cnu.project.domain;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +18,7 @@ public class Authority implements GrantedAuthority{
 	private Long id;
 	private String authority;
 	@ManyToOne
+	@JsonIgnore
 	private User user;
 	
 	public Authority() {}
@@ -47,5 +50,9 @@ public class Authority implements GrantedAuthority{
 	public String getAuthority() {
 		return authority;
 	}
+	
+	public void setAuthority(String authority) {
+        this.authority = authority;
+    }
 
 }

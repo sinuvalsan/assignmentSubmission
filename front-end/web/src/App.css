@@ -19,3 +19,9 @@
   padding: 1em;
   margin: 1em 0em;
 }
+
+.login-button{
+  width: 100%;
+  justify-content: center !important;
+  align-self: center!important;
+}

@@ -1,35 +1,31 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../UserProvider/userProvider";
+import httpRequest from "../Services/httpServices";
 
-const Login = () => {
-  const user = useUser();
+const Register = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  function sendLoginRequest() {
+  function registerUser() {
     const reqBody = {
+      name: name,
       username: username,
       password: password,
     };
-
-    fetch("api/auth/login", {
+    fetch("api/users/register", {
       headers: {
         "Content-Type": "application/json",
       },
-      method: "post",
+      method: "POST",
       body: JSON.stringify(reqBody),
     })
       .then((response) => {
-        if (response.status === 200)
-          return Promise.all([response.json(), response.headers]);
-        else return Promise.reject("Invalid login attempt");
-      })
-      .then(([body, headers]) => {
-        user.setJwt(headers.get("authorization"));
-        navigate("/dashboard");
+        if (response.status === 226)
+          return Promise.reject("User already exists");
+        else return Promise.all([response.text(), response.headers]);
       })
       .catch((message) => {
         alert(message);
@@ -38,13 +34,22 @@ const Login = () => {
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-    sendLoginRequest();
+    registerUser();
   };
 
   return (
     <>
       <Container className="mt-5 d-flex align-items-center justify-content-center">
         <Form onSubmit={onFormSubmit}>
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Form.Group>
           <Form.Group className="mb-3" controlId="username">
             <Form.Label>Username</Form.Label>
             <Form.Control
@@ -65,21 +70,31 @@ const Login = () => {
           </Form.Group>
           <div>
             <Button
-              id="submit"
+              id="register"
               type="submit"
               variant="primary"
-              className="login-button"
+              className="login-button mb-2"
             >
-              Login
+              Register
+            </Button>
+          </div>
+          <div>
+            <Button
+              id="back"
+              type="button"
+              variant="secondary"
+              className="login-button"
+              onClick={() => {
+                navigate(`/login`);
+              }}
+            >
+              Back
             </Button>
           </div>
         </Form>
       </Container>
-      <div className="mt-3 d-flex align-items-center justify-content-center">
-        Not a member? <a href="/register">Register</a>
-      </div>
     </>
   );
 };
 
-export default Login;
+export default Register;
